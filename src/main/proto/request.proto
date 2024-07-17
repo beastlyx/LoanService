@@ -1,0 +1,49 @@
+syntax = "proto2";
+
+package operation;
+
+option java_package = "buffers";
+option java_outer_classname = "RequestProtos";
+
+import "response.proto";
+
+// every request has one of these types
+message ClientToServerRequest {
+    enum OperationType {
+        SUMMARY = 0;       // when the user wants to see their account summary
+        ID = 1;             // when the user sends over their clientID -- has the ID field as data
+        CREDIT = 2;      // when the client wants to request a line of credit -- needs to send the amount
+        PAYBACK = 3;     // when the client want to request to make a payment -- needs to send the amount
+        CLIENTSUMMARY = 4;      // when the client wants to see a summary of clients
+        NODESUMMARY = 5;        // when the client wants to see a summary of nodes
+        QUIT = 6;             // when the user wants to quit the game -- has no further data
+    }
+    optional OperationType operationType = 1 [default = ID]; // has the operation type
+    optional int32 Id = 2;            // the id of the client
+    optional double amount = 3;    // the amount that client is sending to server for loan request/ payback request
+}
+
+message NodeToServerRequest {
+    enum OperationType {
+        ID = 0;  // sends node id to server
+        ACCEPT = 1;  // accepted request from server
+        DECLINE = 2;  // denied request from server
+        CONFIRM = 3;  // confirming loan or payment
+    }
+    optional OperationType operationType = 1 [default = ID]; // has the operation type
+    optional int32 nodeID = 2;
+    optional double amount = 3;
+    optional Node node = 4;
+    optional Client client = 5;
+    optional string reason = 6;
+}
+
+// Initial handshake to server from node or client
+message ConnectionRequest {
+    enum Connection {
+        CLIENT = 0;
+        NODE = 1;
+    }
+    optional Connection connection = 1 [default = NODE];
+    optional int32 id = 2;
+}

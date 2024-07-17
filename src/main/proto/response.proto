@@ -1,0 +1,68 @@
+syntax = "proto2";
+
+package operation;
+
+option java_package = "buffers";
+option java_outer_classname = "ResponseProtos";
+
+
+// A response from the server can be any of these types
+// More detailed description can be found in PROTOCOL.md
+message Data {
+    repeated Entry entries = 1; // client data
+    optional Node node = 2;
+    optional Client client = 3;
+}
+message ServerToClientResponse {
+    enum ResponseType {
+        GREETING = 0;  // initial greeting message
+        STANDBY = 1;  // client stays idle waiting for server to provide update
+        DECISION = 2;  // decision on approval/denial
+        BYE = 4;  // for exiting the program
+    }
+
+    optional ResponseType responseType = 1 [default = GREETING];
+
+    // Possible fields, see PROTOCOL.md for details
+    optional string menuoptions = 2; // the menu send to the client
+    optional string message = 3; // error or other messages
+    optional double requested = 4;
+}
+
+message ServerToNodeResponse {
+    enum ResponseType {
+        GREETING = 0;   // initial greeting message
+        CREDIT = 1;  // credit request
+        PAYBACK = 2;  // payback request
+        APPROVED = 3;  // lets node know the loan has been approved
+        STANDBY = 4;  // node stays idle waiting for request to come in
+    }
+    optional ResponseType responseType = 1 [default = STANDBY];  // default is standby for node to remain idle awaiting requests
+    optional string message = 2;  // message for communicating to node
+    optional Client client = 3;  // client object
+    optional Node node = 4;  // node object
+    optional double split_amount = 5; // stores amount to be split by node
+    optional double amount = 6;  // stores amount requested by client
+}
+
+message Entry {
+    oneof entry {
+        Client client = 1;
+        Node node = 2;
+    }
+}
+
+message Node {
+    optional int32 nodeID = 1;   // node ID
+    optional double amount = 2;  // amount node made available to server
+    repeated Client client = 3;  // list of clients that have a loan with this node
+    optional string reason = 4;  // node reason for approving/denying request from client
+}
+
+message Client {
+    optional int32 id = 1;           // client id
+    optional double loan = 2;        // how much client has borrowed
+    optional double paid = 3;        // how much client has paid back
+    optional double requested = 4;   // how much client has requested
+    optional double node_split = 5;  // how much is getting split per node (for loan requests and paybacks)
+}
