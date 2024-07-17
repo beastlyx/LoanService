@@ -3,8 +3,7 @@
 ## Description
 This is a simple implementation of a program that allows multiple clients and multiple nodes to be connected to the server simultaneously.
 The client(s) connect and have a menu option to either see any existing loans that they may have, they can request a loan, or
-they can pay back an existing loan. (FOR GRADING PURPOSES I INCLUDED 2 MORE OPTIONS SO IT IS EASIER ON THE GRADER. Option 4 lets
-you see the list of all clients and their data, option 5 lets you see the list of all nodes and their data).
+they can pay back an existing loan.
 
 The server class is responsible for accepting multiple connections from clients and nodes and has to maintain how each connected
 thread communicates with the server (client and nodes have different communications between server). 
